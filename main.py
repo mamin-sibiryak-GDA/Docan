@@ -59,9 +59,9 @@ for current_page in doc:
         page_text = page.get_text("text")
         txt += page_text
 
-# f = open("tmp.txt", mode="w+", encoding="utf-8")
-# f.write(txt)
-# f.close()
+f = open("tmp.txt", mode="w+", encoding="utf-8")
+f.write(txt)
+f.close()
 
 print("\n\n------------------\n\nВыберите тип документа:\n")
 print("1 - Запрос от судебных приставов\n\n------------------\n\n")
