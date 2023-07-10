@@ -30,6 +30,7 @@ sr = dnn_superres.DnnSuperResImpl_create()
 sr.readModel("./src/FSRCNN_x2.pb")
 sr.setModel("fsrcnn", 2)
 
+
 def get_page_text(current_page, doc):
     if doc.load_page(current_page.number).get_text("text") == "":
         for img in tqdm(doc.get_page_images(current_page.number),
