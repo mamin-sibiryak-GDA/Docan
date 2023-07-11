@@ -92,9 +92,7 @@ def doctype1(doc):
             for span in d.spans:
                 span.normalize(morph_vocab)
                 name += span.normal + ' '
-            if name[0:3] != "ООО" and name[0:3] != "ОАО" and name[0:3] != "ЗАО" and name[0:2] != "АО" and name[
-                                                                                                          0:3] != "ПАО":
-                name = name.title()
+            name = name.title()
             ws.cell(row=4 + cnt, column=7, value=name)
             # print(name)
         date2 = re.search('\d{2}(\s)?.(\s)?\d{2}(\s)?.(\s)?\d{4}\sго(-\n)?да\sро(-\n)?ж(-\n)?де(-\n)?ния', page_text)
