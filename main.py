@@ -111,13 +111,12 @@ def doctype1(doc):
             # print(code2[0])
         cnt += 1
 
-    print("Выберите путь и введите название файла")
+    print("\nВыберите путь и введите название файла")
     output_path = ""
     tkinter.Tk().withdraw()
     while output_path == "":
         output_path = filedialog.asksaveasfilename(title="Назовите файл формата XLSX",
                                                    filetypes=[("XLSX files", "*.xlsx")])
-    tkinter.Tk().destroy()
 
     if output_path[-5:] == '.xlsx':
         wb.save(output_path)
@@ -129,8 +128,8 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 print("Выберите путь до PDF файла")
 pdf_document = ""
 tkinter.Tk().withdraw()
-pdf_document = filedialog.askopenfilename(title="Выберите файл формата PDF", filetypes=[("PDF files", "*.pdf")])
-tkinter.Tk().destroy()
+pdf_document = filedialog.askopenfilename(title="Выберите файл формата PDF",
+                                          filetypes=[("PDF files", "*.pdf")])
 if pdf_document == "":
     exit()
 doc = fitz.open(pdf_document)
