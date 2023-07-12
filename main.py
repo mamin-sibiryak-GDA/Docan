@@ -40,7 +40,7 @@ def get_page_text(current_page, doc):
             pix = fitz.Pixmap(doc, xref)
 
         image = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image_upscale = sr.upsample(image)
 
         page_text = pytesseract.image_to_string(image_upscale, lang='rus')
