@@ -63,6 +63,7 @@ def doctype1(doc):
     wb = load_workbook('./src/blank1.xlsx')
     ws = wb.active
     cnt = 0
+<<<<<<< Updated upstream
     for current_page in doc:
         ws.cell(row=4 + cnt, column=1, value=cnt + 1)
         page_text = get_page_text(current_page, doc)
@@ -110,6 +111,64 @@ def doctype1(doc):
             ws.cell(row=4 + cnt, column=5, value=code2[0])
             # print(code2[0])
         cnt += 1
+=======
+    for pdf_document in pdf_documents:
+        doc = fitz.open(pdf_document)
+        print("\n\n------------------\n")
+        print("Исходный документ: ", doc)
+        print("\nКоличество страниц: %i\n\n------------------\n" % doc.page_count)
+        print(doc.metadata)
+        for current_page in doc:
+            ws.cell(row=4 + cnt, column=1, value=cnt + 1)
+            page_text = get_page_text(current_page, doc)
+            # print(page_text)
+            # print(cnt + 1)
+            date1 = re.search('от\s\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d', page_text)
+            if date1:
+                date1 = re.search('\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d', date1[0])
+                ws.cell(row=4 + cnt, column=2, value=date1[0].replace(' ', ''))
+                # print(date1[0].replace(' ', ''))
+            code1 = re.search('8(\s)?6(\s)?0(\s)?1(\s)?0(\s)?/[\d\s]+/[\d\s]+', page_text)
+            if code1:
+                ws.cell(row=4 + cnt, column=3, value=code1[0].replace(' ', ''))
+                # print(code1[0].replace(' ', ''))
+            name = re.search('должника:[0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+,', page_text)
+            if name:
+                name = re.search(':[0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+', name[0])
+                name = re.search('[0-9a-zA-Zа-яА-ЯёЁ"\\\'.-][0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+', name[0])
+                name = name[0].replace("\n", " ").replace("- ", "")
+                text = 'Почему у нас сегодня на работе нету ' + name
+                d = Doc(text)
+                d.segment(segmenter)
+                d.tag_morph(morph_tagger)
+                d.parse_syntax(syntax_parser)
+                d.tag_ner(ner_tagger)
+                name = ''
+                for span in d.spans:
+                    span.normalize(morph_vocab)
+                    name += span.normal + ' '
+                name = name.title()
+                ws.cell(row=4 + cnt, column=7, value=name)
+                # print(name)
+            date2 = re.search(
+                '\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d\sго(-\n)?да\sро(-\n)?ж(-\n)?де(-\n)?ния',
+                page_text)
+            if date2:
+                date2 = re.search('\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d', date2[0])
+                ws.cell(row=4 + cnt, column=6, value=date2[0].replace(' ', ''))
+                # print(date2[0].replace(' ', ''))
+            inn = re.search('ИНН\s[\d\s]+', page_text)
+            if inn:
+                inn = re.search('\d[\d\s]*', inn[0])
+                ws.cell(row=4 + cnt, column=4, value=int(inn[0].replace(' ', '')))
+                # print(inn[0].replace(' ', ''))
+            code2 = re.search('[\d\s]+/[\d\s]+/[\d\s]+-(\s)?ИП', page_text)
+            if code2:
+                ws.cell(row=4 + cnt, column=5, value=code2[0].replace(' ', ''))
+                # print(code2[0].replace(' ', ''))
+            cnt += 1
+        doc.close()
+>>>>>>> Stashed changes
 
     print("\nВыберите путь и введите название файла")
     output_path = ""
@@ -123,23 +182,26 @@ def doctype1(doc):
     else:
         wb.save(output_path + ".xlsx")
 
+    return cnt
+
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-print("Выберите путь до PDF файла")
-pdf_document = ""
+print("Выберите путь до PDF файлов")
+pdf_documents = ""
 tkinter.Tk().withdraw()
+<<<<<<< Updated upstream
 pdf_document = filedialog.askopenfilename(title="Выберите файл формата PDF",
                                           filetypes=[("PDF files", "*.pdf")])
 if pdf_document == "":
+=======
+pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
+                                            filetypes=[("PDF files", "*.pdf")])
+if pdf_documents == "":
+>>>>>>> Stashed changes
     exit()
-doc = fitz.open(pdf_document)
-print("Исходный документ: ", doc)
-print("\nКоличество страниц: %i\n\n------------------\n" % doc.page_count)
-print(doc.metadata)
-print("\n------------------\n\nВыберите тип документа:\n")
+print("\n------------------\n\nВыберите тип документов:\n")
 print("1 - Запрос от судебных приставов\n\n------------------\n")
-print("Номер документа: ", end='')
+print("Тип документа: ", end='')
 doctype = input()
-print('')
 if doctype == '1':
-    doctype1(doc)
+    doctype1(pdf_documents)
