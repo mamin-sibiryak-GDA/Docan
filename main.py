@@ -64,6 +64,7 @@ def doctype1(doc):
     ws = wb.active
     cnt = 0
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     for current_page in doc:
         ws.cell(row=4 + cnt, column=1, value=cnt + 1)
         page_text = get_page_text(current_page, doc)
@@ -112,6 +113,8 @@ def doctype1(doc):
             # print(code2[0])
         cnt += 1
 =======
+=======
+>>>>>>> Stashed changes
     for pdf_document in pdf_documents:
         doc = fitz.open(pdf_document)
         print("\n\n------------------\n")
@@ -168,6 +171,9 @@ def doctype1(doc):
                 # print(code2[0].replace(' ', ''))
             cnt += 1
         doc.close()
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     print("\nВыберите путь и введите название файла")
@@ -190,9 +196,15 @@ print("Выберите путь до PDF файлов")
 pdf_documents = ""
 tkinter.Tk().withdraw()
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 pdf_document = filedialog.askopenfilename(title="Выберите файл формата PDF",
                                           filetypes=[("PDF files", "*.pdf")])
 if pdf_document == "":
+=======
+pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
+                                            filetypes=[("PDF files", "*.pdf")])
+if pdf_documents == "":
+>>>>>>> Stashed changes
 =======
 pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
                                             filetypes=[("PDF files", "*.pdf")])
