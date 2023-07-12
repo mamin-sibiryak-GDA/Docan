@@ -63,58 +63,6 @@ def doctype1(doc):
     wb = load_workbook('./src/blank1.xlsx')
     ws = wb.active
     cnt = 0
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    for current_page in doc:
-        ws.cell(row=4 + cnt, column=1, value=cnt + 1)
-        page_text = get_page_text(current_page, doc)
-        # print(page_text)
-        # print(cnt + 1)
-        date1 = re.search('от\s\d{2}(\s)?.(\s)?\d{2}(\s)?.(\s)?\d{4}', page_text)
-        if date1:
-            date1 = re.search('\d{2}(\s)?.(\s)?\d{2}(\s)?.(\s)?\d{4}', date1[0])
-            ws.cell(row=4 + cnt, column=2, value=date1[0])
-            # print(date1[0])
-        code1 = re.search('86010(\s)?/(\s)?\d+(\s)?/(\s)?\d+', page_text)
-        if code1:
-            ws.cell(row=4 + cnt, column=3, value=code1[0])
-            # print(code1[0])
-        name = re.search('должника:[0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+,', page_text)
-        if name:
-            name = re.search(':[0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+', name[0])
-            name = re.search('[0-9a-zA-Zа-яА-ЯёЁ"\\\'.-][0-9a-zA-Zа-яА-ЯёЁ\s"\\\'.-]+', name[0])
-            name = name[0].replace("\n", " ").replace("- ", "")
-            text = 'Почему у нас сегодня на работе нету ' + name
-            d = Doc(text)
-            d.segment(segmenter)
-            d.tag_morph(morph_tagger)
-            d.parse_syntax(syntax_parser)
-            d.tag_ner(ner_tagger)
-            name = ''
-            for span in d.spans:
-                span.normalize(morph_vocab)
-                name += span.normal + ' '
-            name = name.title()
-            ws.cell(row=4 + cnt, column=7, value=name)
-            # print(name)
-        date2 = re.search('\d{2}(\s)?.(\s)?\d{2}(\s)?.(\s)?\d{4}\sго(-\n)?да\sро(-\n)?ж(-\n)?де(-\n)?ния', page_text)
-        if date2:
-            date2 = re.search('\d{2}(\s)?.(\s)?\d{2}(\s)?.(\s)?\d{4}', date2[0])
-            ws.cell(row=4 + cnt, column=6, value=date2[0])
-            # print(date2[0])
-        inn = re.search('ИНН\s\d+', page_text)
-        if inn:
-            inn = re.search('\d+', inn[0])
-            ws.cell(row=4 + cnt, column=4, value=int(inn[0]))
-            # print(inn[0])
-        code2 = re.search('\d+(\s)?/(\s)?\d+(\s)?/(\s)?\d+(\s)?-(\s)?ИП', page_text)
-        if code2:
-            ws.cell(row=4 + cnt, column=5, value=code2[0])
-            # print(code2[0])
-        cnt += 1
-=======
-=======
->>>>>>> Stashed changes
     for pdf_document in pdf_documents:
         doc = fitz.open(pdf_document)
         print("\n\n------------------\n")
@@ -171,10 +119,6 @@ def doctype1(doc):
                 # print(code2[0].replace(' ', ''))
             cnt += 1
         doc.close()
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     print("\nВыберите путь и введите название файла")
     output_path = ""
@@ -195,21 +139,9 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 print("Выберите путь до PDF файлов")
 pdf_documents = ""
 tkinter.Tk().withdraw()
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-pdf_document = filedialog.askopenfilename(title="Выберите файл формата PDF",
-                                          filetypes=[("PDF files", "*.pdf")])
-if pdf_document == "":
-=======
 pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
                                             filetypes=[("PDF files", "*.pdf")])
 if pdf_documents == "":
->>>>>>> Stashed changes
-=======
-pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
-                                            filetypes=[("PDF files", "*.pdf")])
-if pdf_documents == "":
->>>>>>> Stashed changes
     exit()
 print("\n------------------\n\nВыберите тип документов:\n")
 print("1 - Запрос от судебных приставов\n\n------------------\n")
