@@ -20,8 +20,11 @@ import pytesseract
 import cv2
 from cv2 import dnn_superres
 from tqdm import tqdm
-import tkinter
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 from openpyxl import load_workbook
 import numpy as np
 import re
@@ -34,7 +37,7 @@ sr.setModel("fsrcnn", 2)
 def get_page_text(current_page, doc):
     if doc.load_page(current_page.number).get_text("text") == "":
         for img in tqdm(doc.get_page_images(current_page.number),
-                        desc="%i страница из %i" % (current_page.number + 1, doc.page_count)):
+                        desc="Обрабатывается %i страница из %i" % (current_page.number + 1, doc.page_count)):
             xref = img[0]
             image = doc.extract_image(xref)
             pix = fitz.Pixmap(doc, xref)
@@ -51,7 +54,7 @@ def get_page_text(current_page, doc):
         return page_text
 
 
-def doctype1(doc):
+def doctype1():
     segmenter = Segmenter()
     morph_vocab = MorphVocab()
 
@@ -120,13 +123,6 @@ def doctype1(doc):
             cnt += 1
         doc.close()
 
-    print("\nВыберите путь и введите название файла")
-    output_path = ""
-    tkinter.Tk().withdraw()
-    while output_path == "":
-        output_path = filedialog.asksaveasfilename(title="Назовите файл формата XLSX",
-                                                   filetypes=[("XLSX files", "*.xlsx")])
-
     if output_path[-5:] == '.xlsx':
         wb.save(output_path)
     else:
@@ -135,17 +131,63 @@ def doctype1(doc):
     return cnt
 
 
+def open_pdf_documents():
+    global pdf_documents
+    pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
+                                                filetypes=[("PDF files", "*.pdf")])
+    entry_open.delete(0, END)
+    entry_open.insert(0, pdf_documents)
+
+
+def save_excel_file():
+    global output_path
+    output_path = filedialog.asksaveasfilename(title="Назовите файл")
+    entry_save.delete(0, END)
+    entry_save.insert(0, output_path)
+
+
+def start_button():
+    if pdf_documents == "" or output_path == "" or doctypes_var.get() == "":
+        messagebox.showwarning("Предупреждение", "Вы не указали все данные")
+    else:
+        root.destroy()
+
+
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-print("Выберите путь до PDF файлов")
-pdf_documents = ""
-tkinter.Tk().withdraw()
-pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
-                                            filetypes=[("PDF files", "*.pdf")])
-if pdf_documents == "":
-    exit()
-print("\n------------------\n\nВыберите тип документов:\n")
-print("1 - Запрос от судебных приставов\n\n------------------\n")
-print("Тип документа: ", end='')
-doctype = input()
-if doctype == '1':
-    doctype1(pdf_documents)
+doctypes = ["Запрос от судебных приставов"]
+pdf_documents = ''
+output_path = ''
+root = tk.Tk()
+root.title("Docan")
+root.geometry("500x300")
+doctypes_var = tk.StringVar()
+root.grid_rowconfigure(6, weight=1)
+root.grid_columnconfigure(0, weight=1)
+
+entry_open = ttk.Entry(width=60)
+entry_open.grid(column=0, row=1, padx=5, pady=5, sticky="W")
+
+open_button = Button(text="Открыть PDF файлы", command=open_pdf_documents, height=1, width=30)
+open_button.grid(column=0, row=2, padx=5, pady=5, sticky="W")
+
+entry_save = ttk.Entry(width=60)
+entry_save.grid(column=0, row=3, padx=5, pady=5, sticky="W")
+
+save_button = Button(text="Назвать и сохранить файл в ...", command=save_excel_file, height=1, width=30)
+save_button.grid(column=0, row=4, padx=5, pady=5, sticky="W")
+
+combobox = ttk.Combobox(textvariable=doctypes_var, values=doctypes, height=1, width=40)
+combobox.grid(column=0, row=5, padx=5, pady=5, sticky="W")
+
+start_button = Button(text="Начать", command=start_button, height=1, width=20)
+start_button.grid(column=0, row=7, padx=5, pady=5, sticky="W")
+
+root.mainloop()
+
+doctype = doctypes_var.get()
+
+if pdf_documents == "" or output_path == "" or doctypes_var.get() == "":
+    exit(0)
+
+if doctype == "Запрос от судебных приставов":
+    doctype1()
