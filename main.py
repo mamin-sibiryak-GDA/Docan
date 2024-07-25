@@ -43,7 +43,6 @@ def get_page_text(current_page, doc):
             pix = fitz.Pixmap(doc, xref)
 
         image = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image_upscale = sr.upsample(image)
 
         page_text = pytesseract.image_to_string(image_upscale, lang='rus')
@@ -131,6 +130,38 @@ def doctype1():
     return cnt
 
 
+def doctype2():
+    for pdf_document in pdf_documents:
+        doc = fitz.open(pdf_document)
+        print("\n\n------------------\n")
+        print("Исходный документ: ", doc)
+        print("\nКоличество страниц: %i\n\n------------------\n" % doc.page_count)
+        print(doc.metadata)
+        doc_text = ''
+        for current_page in doc:
+            doc_text += get_page_text(current_page, doc)
+        doc.close()
+
+        ish = re.search('[Ии]сх.[№0-9a-zA-Zа-яА-ЯёЁ "\\\'.«»-]+', doc_text)
+        print(ish[0] if ish else '')
+
+        name_uplim = re.search('Сведения\sо\sдолжнике:', doc_text)
+        print(name_uplim.end() if name_uplim else '')
+        name_downlim = re.search('Сведения\sо\sфинансовом\sуправляющем:', doc_text)
+        print(name_downlim.start() if name_downlim else '')
+
+        name = re.search('ФИО:\s[0-9a-zA-Zа-яА-ЯёЁ "\\\'-]+', doc_text[name_uplim:name_downlim])
+        if name:
+            name = re.search(':\s[0-9a-zA-Zа-яА-ЯёЁ "\\\'-]+', name[0])
+            name = re.search('[0-9a-zA-Zа-яА-ЯёЁ"\\\'-][0-9a-zA-Zа-яА-ЯёЁ "\\\'-]+', name[0])
+        print(name[0] if name else '')
+        date = re.search('Дата рождения: \d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d',
+                         doc_text[name_uplim:name_downlim])
+        if date:
+            date = re.search('\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?.(\s)?\d(\s)?\d(\s)?\d(\s)?\d', date[0])
+        print(date[0] if date else '')
+
+
 def open_pdf_documents():
     global pdf_documents
     pdf_documents = filedialog.askopenfilenames(title="Выберите файлы формата PDF",
@@ -154,6 +185,7 @@ def start_button():
 
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# doctypes = ["Запрос от судебных приставов", "Запрос от финансового управляющего Коволенко"]
 doctypes = ["Запрос от судебных приставов"]
 pdf_documents = ''
 output_path = ''
@@ -176,7 +208,7 @@ entry_save.grid(column=0, row=3, padx=5, pady=5, sticky="W")
 save_button = Button(text="Назвать и сохранить файл в ...", command=save_excel_file, height=1, width=30)
 save_button.grid(column=0, row=4, padx=5, pady=5, sticky="W")
 
-combobox = ttk.Combobox(textvariable=doctypes_var, values=doctypes, height=1, width=40)
+combobox = ttk.Combobox(textvariable=doctypes_var, values=doctypes, height=1, width=60)
 combobox.grid(column=0, row=5, padx=5, pady=5, sticky="W")
 
 start_button = Button(text="Начать", command=start_button, height=1, width=20)
@@ -191,3 +223,5 @@ if pdf_documents == "" or output_path == "" or doctypes_var.get() == "":
 
 if doctype == "Запрос от судебных приставов":
     doctype1()
+elif doctype == "Запрос от финансового управляющего Коволенко":
+    doctype2()

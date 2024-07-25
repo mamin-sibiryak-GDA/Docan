@@ -54,7 +54,7 @@
  [],
  False,
  False,
- 1689227675,
+ 1693479971,
  [('run.exe',
    'C:\\Users\\Lenovo\\PycharmProjects\\Docan\\venv\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')])
